@@ -14,7 +14,11 @@ export default function Home() {
     description: "",
     channelTitle: "",
     audioUrl: "",
-    thumbnails: {},
+    thumbnail: {
+      url: "",
+      width: 0,
+      height: 0,
+    },
   });
 
   const handleConvert = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +33,11 @@ export default function Home() {
         description: "",
         channelTitle: "",
         audioUrl: "",
-        thumbnails: [],
+        thumbnail: {
+          url: "",
+          width: 0,
+          height: 0,
+        },
       });
 
       toast.error("Invalid URL", {
@@ -78,6 +86,23 @@ export default function Home() {
         </div>
         {loading && (
           <div className="w-10 h-10 border-[8px] border-gray-300 rounded-full animate-spin border-t-[#ff8989] mt-10"></div>
+        )}
+        {musicInfo.title.length > 0 && (
+          <div className="flex flex-row border-2 border-black rounded-xl w-[35rem] p-4 gap-4">
+            <Image
+              src={musicInfo.thumbnail.url}
+              alt={musicInfo.title}
+              width={150}
+              height={75}
+              className="rounded-xl"
+            />
+            <div className="flex flex-col gap-4">
+              <p className="text-sm">{musicInfo.title}</p>
+              <button className="bg-[#ff8989] rounded-lg p-2 text-white w-auto">
+                Download
+              </button>
+            </div>
+          </div>
         )}
       </section>
       <Toaster richColors />
