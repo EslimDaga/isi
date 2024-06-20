@@ -18,7 +18,7 @@ interface VideoDetails {
   description: string | null;
   channelTitle: string;
   publishedAt: string;
-  thumbnails: Record<string, Thumbnail>;
+  thumbnail: Thumbnail;
   audioUrl: string;
 }
 
@@ -26,13 +26,11 @@ const getVideoDetails = async (url: string): Promise<VideoDetails> => {
   const info = await ytdl.getInfo(url);
   const format = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
 
-  const thumbnails: Record<string, Thumbnail> = {};
-  info.videoDetails.thumbnails.forEach((thumbnail) => {
-    thumbnails[thumbnail.width] = {
-      url: thumbnail.url,
-      width: thumbnail.width,
-      height: thumbnail.height,
-    };
+  // Encontrar la miniatura con la resolución más alta
+  const bestThumbnail = info.videoDetails.thumbnails.reduce((prev, current) => {
+    return current.width * current.height > prev.width * prev.height
+      ? current
+      : prev;
   });
 
   return {
@@ -41,7 +39,11 @@ const getVideoDetails = async (url: string): Promise<VideoDetails> => {
     description: info.videoDetails.description,
     channelTitle: info.videoDetails.author.name,
     publishedAt: info.videoDetails.publishDate,
-    thumbnails,
+    thumbnail: {
+      url: bestThumbnail.url,
+      width: bestThumbnail.width,
+      height: bestThumbnail.height,
+    },
     audioUrl: format.url,
   };
 };
